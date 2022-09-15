@@ -24,7 +24,7 @@ function strategy.load(session, cookie, key, keep_lock)
   local hash      = cookie.hash
 
   if not key then
-    key = concat{ id, expires, usebefore }
+    key = concat{ id, expires }
   end
 
   local hkey = session.hmac(session.secret, key)
@@ -48,7 +48,7 @@ function strategy.load(session, cookie, key, keep_lock)
     end
 
   else
-    local input = concat{ key, data, session.key }
+    local input = concat{ key, data, session.key, usebefore }
     if session.hmac(hkey, input) ~= hash then
       if storage.close then
         storage:close(id_encoded)
@@ -122,7 +122,7 @@ function strategy.modify(session, action, close, key)
   end
 
   if not key then
-    key = concat{ id, expires, usebefore }
+    key = concat{ id, expires }
   end
 
   local data, err = session.serializer.serialize(session.data)
@@ -161,7 +161,7 @@ function strategy.modify(session, action, close, key)
   else
     -- it would be better to calculate signature from encrypted_data,
     -- but this is kept for backward compatibility
-    hash = session.hmac(hkey, concat{ key, data, session.key })
+    hash = session.hmac(hkey, concat{ key, data, session.key, usebefore })
   end
 
   if action == "save" and storage.save then

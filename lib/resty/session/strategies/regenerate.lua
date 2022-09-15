@@ -1,7 +1,5 @@
 local default = require "resty.session.strategies.default"
 
-local concat  = table.concat
-
 local strategy = {
   regenerate = true,
   start      = default.start,
@@ -10,10 +8,6 @@ local strategy = {
 }
 
 local function key(source)
-  if source.usebefore then
-    return concat{ source.id, source.usebefore }
-  end
-
   return source.id
 end
 
